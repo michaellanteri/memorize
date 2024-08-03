@@ -23,19 +23,26 @@ struct ContentView: View {
 }
 
 struct CardView: View {
-    var isFaceUp: Bool = false
+    //Vars in views are IMMUTABLE after initalizing, can't change isFaceUp directly
+    //@State is only for small temporary things--game logic should not be done in a view
+    //@State is a pointer, so isFaceUp can point to different things while being immutable
+    @State var isFaceUp = false
     
     var body: some View {
         ZStack {
+            //Type inference
+            let base = RoundedRectangle(cornerRadius: 12.0)
             if isFaceUp {
-                RoundedRectangle(cornerRadius: 12.0)
-                    .foregroundColor(.white)
-                RoundedRectangle(cornerRadius: 12.0)
-                    .strokeBorder(lineWidth: 2)
+                base.foregroundColor(.white)
+                base.strokeBorder(lineWidth: 2)
                 Text("🥳").font(.largeTitle)
             } else {
-                RoundedRectangle(cornerRadius: 12.0)
+                base.fill()
             }
+        }
+        .onTapGesture {
+            //Same as isFaceUp = !isFaceUp
+            isFaceUp.toggle()
         }
     }
 }
