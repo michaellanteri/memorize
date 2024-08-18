@@ -7,79 +7,67 @@
 
 import SwiftUI
 
+//"Behaves like a..."
+//EmojiMemoryGameView must behave like a View as WindowGroup in "MemorizeApp" file as "struct WindowGroup<Content> where Content : View"
+//So, Content must be a View
+//If EmojiMemoryGameView conforms to View, we unlock the ability (functionality) to use WindowGroup and ultimately see the UI
+//That is the benefit of protocols and functional programming
+
 struct EmojiMemoryGameView: View {
-    var viewModel: EmojiMemoryGame
-    
-    @State var emojis: [String] = []
-    @State var cardColor: Color = .white
+    //If something changed, redraw me
+    @ObservedObject var viewModel: EmojiMemoryGame
     
     var body: some View {
         VStack {
-            title
+            newGame
             ScrollView {
                 cards
+                //value -- When any of our cards change, they will be animated
+                    .animation(.default, value: viewModel.cards)
             }
-            themeChoices
+            shuffle
         }
         .padding()
     }
     
-    var title: some View {
-        Text("Memorize!").font(.largeTitle)
-    }
-    
-    var cards: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 45))]) {
-            ForEach(0..<emojis.count, id: \.self) { index in
-                CardView(content: emojis[index])
-                    .aspectRatio(2/3, contentMode: .fit)
-            }
-        }
-        .foregroundColor(cardColor)
-        .padding()
-    }
-    
-    var themeChoices: some View {
-        HStack(alignment: .lastTextBaseline, spacing: 50) {
-            animalTheme
-            foodTheme
-            flagTheme
-        }
-        .padding()
-    }
-    
-    func themeChoice(name: String, color: Color, symbol: String, entities: [String]) -> some View {
+    var newGame: some View {
         Button(action: {
-            let shuffledEntities = entities.shuffled()
-            let cardCount = Int.random(in: 2...entities.count)
-            let randNumEntities = shuffledEntities[0..<cardCount]
-            emojis = (randNumEntities+randNumEntities).shuffled()
-            cardColor = color
+            viewModel.newGame()
         }, label: {
-            VStack(spacing: 5) {
-                Image(systemName: symbol).font(.title)
-                Text(name).font(.caption)
-            }
+            Text("New Game").font(.title)
         })
     }
     
-    var animalTheme: some View {
-        themeChoice(name: "Animals", color: .orange, symbol: "dog.fill", entities: ["🐣","🐒","🐙","🦆","🦁","🐯","🐶","🐻","🐺","🐧","🦋","🦞","🐠"])
+    var cards: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 85), spacing: 0)], spacing: 0) {
+            //Each card (view) moves, not just change each emoji like viewModel.cards.indices would do
+            ForEach(viewModel.cards) { card in
+                CardView(card)
+                    .aspectRatio(2/3, contentMode: .fit)
+                    .padding(4)
+                    .onTapGesture {
+                        viewModel.choose(card)
+                    }
+            }
+        }
+        .foregroundColor(.orange)
+        .padding()
     }
     
-    var foodTheme: some View {
-        themeChoice(name: "Food", color: .green, symbol: "carrot.fill", entities: ["🥐","🥕","🍌","🥞","🥭","🫐","🥒","🍑","🥥"])
-    }
-    
-    var flagTheme: some View {
-        themeChoice(name: "Flags", color: .red, symbol: "flag.fill", entities: ["🇦🇺","🇨🇦","🇬🇷","🇵🇭","🇸🇪","🇿🇦","🇺🇸","🇧🇷","🇹🇩","🇧🇬","🇬🇲","🇱🇧","🇵🇱","🇰🇷","🇮🇹","🇨🇳","🇪🇺"])
+    var shuffle: some View {
+        Button("Shuffle") {
+            viewModel.shuffle()
+        }
     }
     
 }
 
 struct CardView: View {
-    let content: String
-    @State var isFaceUp = false
+    let card: MemoryGame<String>.Card
+    
+    init(_ card: MemoryGame<String>.Card) {
+        self.card = card
+    }
     
     var body: some View {
         ZStack {
@@ -87,17 +75,25 @@ struct CardView: View {
             Group {
                 base.foregroundColor(.white)
                 base.strokeBorder(lineWidth: 2)
-                Text(content).font(.largeTitle)
+                Text(card.content)
+                    .font(.system(size: 200))
+                    .minimumScaleFactor(0.01)
+                    .aspectRatio(1, contentMode: .fit)
             }
-            .opacity(isFaceUp ? 1 : 0)
-            base.fill().opacity(isFaceUp ? 0 : 1)
+            .opacity(card.isFaceUp ? 1 : 0)
+            base.fill().opacity(card.isFaceUp ? 0 : 1)
         }
-        .onTapGesture {
-            isFaceUp.toggle()
-        }
+        .opacity(card.isFaceUp || !card.isMatched ? 1 : 0)
     }
 }
 
+struct Theme {
+    let name: String
+    let color: Color
+    let symbol: String
+    let emojis: [String]
+}
+
 #Preview {
-    EmojiMemoryGameView()
+    EmojiMemoryGameView(viewModel: EmojiMemoryGame())
 }
