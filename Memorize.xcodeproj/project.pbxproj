@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FA00D1D22C8104C800EFDB22 /* AspectVGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA00D1D12C8104C800EFDB22 /* AspectVGrid.swift */; };
 		FA5A989B2C5855D8003BBB24 /* MemorizeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A989A2C5855D8003BBB24 /* MemorizeApp.swift */; };
 		FA5A989D2C5855D8003BBB24 /* EmojiMemoryGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5A989C2C5855D8003BBB24 /* EmojiMemoryGameView.swift */; };
 		FA5A989F2C5855D9003BBB24 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA5A989E2C5855D9003BBB24 /* Assets.xcassets */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FA00D1D12C8104C800EFDB22 /* AspectVGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectVGrid.swift; sourceTree = "<group>"; };
 		FA5A98972C5855D8003BBB24 /* Memorize.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Memorize.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA5A989A2C5855D8003BBB24 /* MemorizeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemorizeApp.swift; sourceTree = "<group>"; };
 		FA5A989C2C5855D8003BBB24 /* EmojiMemoryGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiMemoryGameView.swift; sourceTree = "<group>"; };
@@ -61,6 +63,7 @@
 				FA5A989A2C5855D8003BBB24 /* MemorizeApp.swift */,
 				FA5A989C2C5855D8003BBB24 /* EmojiMemoryGameView.swift */,
 				FA5A98A92C642053003BBB24 /* Notes.swift */,
+				FA00D1D12C8104C800EFDB22 /* AspectVGrid.swift */,
 				FA5A98AB2C6587CD003BBB24 /* MemoryGame.swift */,
 				FA5A98AD2C658CD8003BBB24 /* EmojiMemoryGame.swift */,
 				FA5A989E2C5855D9003BBB24 /* Assets.xcassets */,
@@ -150,6 +153,7 @@
 			files = (
 				FA5A989D2C5855D8003BBB24 /* EmojiMemoryGameView.swift in Sources */,
 				FA5A989B2C5855D8003BBB24 /* MemorizeApp.swift in Sources */,
+				FA00D1D22C8104C800EFDB22 /* AspectVGrid.swift in Sources */,
 				FA5A98AA2C642053003BBB24 /* Notes.swift in Sources */,
 				FA5A98AC2C6587CD003BBB24 /* MemoryGame.swift in Sources */,
 				FA5A98AE2C658CD8003BBB24 /* EmojiMemoryGame.swift in Sources */,

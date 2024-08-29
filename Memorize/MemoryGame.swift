@@ -10,6 +10,7 @@ import Foundation
 //CardContent is a generic
 struct MemoryGame<CardContent> where CardContent: Equatable {
     private(set) var cards: Array<Card>
+    var score: Int
     
     init(numberOfPairsOfCards: Int, cardContentFactory: (Int) -> CardContent) {
         cards = []
@@ -18,6 +19,9 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
             cards.append(Card(content: content, id: "\(pairIndex+1)a"))
             cards.append(Card(content: content, id: "\(pairIndex+1)b"))
         }
+        cards.shuffle()
+        
+        score = 0
     }
     
     var indexOfTheOneAndOnlyFaceUpCard: Int? {
@@ -42,7 +46,17 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
                     if cards[chosenIndex].content == cards[potentialMatchIndex].content {
                         cards[chosenIndex].isMatched = true
                         cards[potentialMatchIndex].isMatched = true
+                        score += 2
+                    } else {
+                        if cards[chosenIndex].wasSeen {
+                            score -= 1
+                        }
+                        if cards[potentialMatchIndex].wasSeen {
+                            score -= 1
+                        }
                     }
+                    cards[chosenIndex].wasSeen = true
+                    cards[potentialMatchIndex].wasSeen = true
                 } else {
                     indexOfTheOneAndOnlyFaceUpCard = chosenIndex
                 }
@@ -60,13 +74,13 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         var isFaceUp = false
         var isMatched = false
         let content: CardContent
+        var wasSeen = false
         
         var id: String
         var debugDescription: String {
             return "\(id): \(content) \(isFaceUp ? "up" : "down") \(isMatched ? "matched" : "")"
         }
     }
-    
 }
 
 extension Array {
@@ -74,4 +88,11 @@ extension Array {
         //Can say count and first because inside an Array type
         return count == 1 ? first : nil
     }
+}
+
+struct Theme<CardContent> where CardContent: Equatable {
+    var name: String
+    var emoji: [CardContent]
+    var numberOfPairs: Int
+    var color: String
 }

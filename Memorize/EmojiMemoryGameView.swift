@@ -17,47 +17,58 @@ struct EmojiMemoryGameView: View {
     //If something changed, redraw me
     @ObservedObject var viewModel: EmojiMemoryGame
     
+    private let aspectRatio: CGFloat = 2/3
+    
+    //Can't make this private because in the View protocol, its not private
     var body: some View {
         VStack {
             newGame
-            ScrollView {
-                cards
-                //value -- When any of our cards change, they will be animated
-                    .animation(.default, value: viewModel.cards)
-            }
+            cards
+            //value -- When any of our cards change, they will be animated
+                .animation(.default, value: viewModel.cards)
             shuffle
+            score
         }
         .padding()
     }
     
     var newGame: some View {
-        Button(action: {
-            viewModel.newGame()
-        }, label: {
-            Text("New Game").font(.title)
-        })
+        VStack(spacing: 10) {
+            Button(action: {
+                viewModel.newGame()
+            }, label: {
+                Text("New Game").font(.title)
+            })
+            Text("\(viewModel.theme.name)")
+        }
     }
     
-    var cards: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 85), spacing: 0)], spacing: 0) {
-            //Each card (view) moves, not just change each emoji like viewModel.cards.indices would do
-            ForEach(viewModel.cards) { card in
-                CardView(card)
-                    .aspectRatio(2/3, contentMode: .fit)
-                    .padding(4)
-                    .onTapGesture {
-                        viewModel.choose(card)
-                    }
-            }
+    //@ViewBuilder says look at contents of cards as if it were a ViewBuilder, even though it has stuff like let aspectRatio... etc.
+    //This is usually implicit without stuff like that
+    @ViewBuilder
+    private var cards: some View {
+        AspectVGrid(viewModel.cards, aspectRatio: aspectRatio) { card in
+            CardView(card)
+                .foregroundColor(viewModel.color)
+                .padding(4)
+                .onTapGesture {
+                    viewModel.choose(card)
+                }
         }
         .foregroundColor(.orange)
-        .padding()
     }
     
     var shuffle: some View {
-        Button("Shuffle") {
+        Button(action: {
             viewModel.shuffle()
-        }
+        }, label: {
+            Text("Shuffle").font(.title3)
+        })
+        .padding(10)
+    }
+    
+    var score: some View {
+        Text("Score: \(viewModel.score)")
     }
     
 }
@@ -85,13 +96,6 @@ struct CardView: View {
         }
         .opacity(card.isFaceUp || !card.isMatched ? 1 : 0)
     }
-}
-
-struct Theme {
-    let name: String
-    let color: Color
-    let symbol: String
-    let emojis: [String]
 }
 
 #Preview {
